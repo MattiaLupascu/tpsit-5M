@@ -1,0 +1,106 @@
+## Spiegazione del file server_sincrono_multicast.py
+
+1. import socket
+   - Importa il modulo socket, necessario per creare connessioni di rete.
+
+2. import threading
+   - Importa il modulo threading, necessario per gestire più connessioni client contemporaneamente.
+
+4-18. def gestisci_client(socket_client):
+   - Definisce una funzione per gestire la comunicazione con un singolo client.
+   
+5. while True:
+   - Inizia un ciclo infinito per gestire la comunicazione continua con il client.
+
+6-12. try:
+   - Tenta di ricevere e inviare messaggi al client.
+
+7. messaggio = socket_client.recv(1024).decode('utf-8')
+   - Riceve un messaggio dal client (fino a 1024 byte) e lo decodifica in una stringa.
+
+8. if not messaggio:
+   - Se non viene ricevuto alcun messaggio, esce dal ciclo.
+
+9. print(f"Ricevuto: {messaggio}")
+   - Stampa il messaggio ricevuto dal client.
+
+11. socket_client.send("Messaggio ricevuto".encode('utf-8'))
+   - Invia una conferma al client.
+
+13-14. except:
+   - Gestisce eventuali eccezioni e interrompe il ciclo.
+
+15. socket_client.close()
+   - Chiude la connessione con il client.
+
+20-21. def main():
+   - Definisce la funzione principale del server.
+
+22. server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+   - Crea un socket per il server utilizzando IPv4 (AF_INET) e TCP (SOCK_STREAM).
+
+24. server.bind(('0.0.0.0', 5000))
+   - Associa il socket all'indirizzo IP '0.0.0.0' (tutti gli indirizzi disponibili) e alla porta 5000.
+
+26. server.listen(5)
+   - Il server inizia ad ascoltare le connessioni in arrivo, con una coda massima di 5 connessioni.
+
+27. print("Server in ascolto sulla porta 5000")
+   - Stampa un messaggio per indicare che il server è in ascolto.
+
+29-34. while True:
+   - Inizia un ciclo infinito per accettare nuove connessioni.
+
+30. socket_client, indirizzo = server.accept()
+   - Accetta una nuova connessione e ottiene il socket del client e il suo indirizzo.
+
+31. print(f"Connessione accettata da {indirizzo}")
+   - Stampa un messaggio per indicare che una connessione è stata accettata.
+
+33. gestore_client = threading.Thread(target=gestisci_client, args=(socket_client,))
+   - Crea un nuovo thread per gestire il client, utilizzando la funzione gestisci_client.
+
+34. gestore_client.start()
+   - Avvia il thread per gestire il client.
+
+36. if __name__ == "__main__":
+   - Controlla se il file è eseguito come script principale.
+
+37. main()
+   - Chiama la funzione principale per avviare il server.
+
+
+## Spiegazione del file client_sincrono_multicast.py
+
+1. import socket
+   - Importa il modulo socket, necessario per creare connessioni di rete.
+
+3-17. def main():
+   - Definisce la funzione principale del client.
+
+4. client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+   - Crea un socket per il client utilizzando IPv4 (AF_INET) e TCP (SOCK_STREAM).
+
+6. client.connect(('127.0.0.1', 5000))
+   - Connette il client al server all'indirizzo IP '127.0.0.1' (localhost) e alla porta 5000.
+
+8-16. while True:
+   - Inizia un ciclo infinito per inviare e ricevere messaggi dal server.
+
+9. messaggio = input("Inserisci il messaggio da inviare: ")
+   - Legge il messaggio da inviare al server dall'input dell'utente.
+
+11. client.send(messaggio.encode('utf-8'))
+   - Invia il messaggio al server.
+
+13. risposta = client.recv(1024).decode('utf-8')
+   - Riceve la risposta dal server (fino a 1024 byte) e la decodifica in una stringa.
+
+14. print(f"Risposta del server: {risposta}")
+   - Stampa la risposta ricevuta dal server.
+
+18. if __name__ == "__main__":
+   - Controlla se il file è eseguito come script principale.
+
+19. main()
+   - Chiama la funzione principale per avviare il client.
