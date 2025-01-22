@@ -2,12 +2,13 @@ import socket
 import threading
 
 def gestisci_client(socket_client):
-    while True:
+    ciclo=True
+    while ciclo:
         try:
             # Riceve il messaggio dal client
             messaggio = socket_client.recv(1024).decode('utf-8')
-            if not messaggio:
-                break
+            if messaggio=="QUIT":
+                ciclo=False
             print(f"Ricevuto: {messaggio}")
             # Invia una conferma al client
             socket_client.send("Messaggio ricevuto".encode('utf-8'))
