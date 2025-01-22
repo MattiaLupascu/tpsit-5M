@@ -13,7 +13,7 @@ def gestisci_client(socket_client):
             # Invia una conferma al client
             socket_client.send("Messaggio ricevuto".encode('utf-8'))
         except:
-            break
+            ciclo=False
     socket_client.close()
 
 def main():
