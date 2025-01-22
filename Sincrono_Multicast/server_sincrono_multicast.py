@@ -9,9 +9,9 @@ def gestisci_client(socket_client,indirizzo):
             messaggio = socket_client.recv(1024).decode('utf-8')
             if messaggio=="QUIT":
                 ciclo=False
-            print(f"Ricevuto: {messaggio}")
+            print(f"Ricevuto {indirizzo}: {messaggio}")
             # Invia una conferma al client
-            socket_client.send(f"Messaggio ricevuto {indirizzo}".encode('utf-8'))
+            socket_client.send(f"Messaggio ricevuto".encode('utf-8'))
         except:
             ciclo=False
     socket_client.close()
