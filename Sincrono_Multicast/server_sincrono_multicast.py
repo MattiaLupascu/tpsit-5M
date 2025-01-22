@@ -1,7 +1,7 @@
 import socket
 import threading
 
-def gestisci_client(socket_client):
+def gestisci_client(socket_client,indirizzo):
     ciclo=True
     while ciclo:
         try:
@@ -11,7 +11,7 @@ def gestisci_client(socket_client):
                 ciclo=False
             print(f"Ricevuto: {messaggio}")
             # Invia una conferma al client
-            socket_client.send("Messaggio ricevuto".encode('utf-8'))
+            socket_client.send(f"Messaggio ricevuto {indirizzo}".encode('utf-8'))
         except:
             ciclo=False
     socket_client.close()
@@ -30,7 +30,7 @@ def main():
         socket_client, indirizzo = server.accept()
         print(f"Connessione accettata da {indirizzo}")
         # Crea un nuovo thread per gestire il client
-        gestore_client = threading.Thread(target=gestisci_client, args=(socket_client,))
+        gestore_client = threading.Thread(target=gestisci_client, args=(socket_client,indirizzo))
         gestore_client.start()
 
 if __name__ == "__main__":
