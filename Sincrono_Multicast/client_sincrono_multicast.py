@@ -14,9 +14,10 @@ def main():
         client.send(messaggio.encode('utf-8'))
         if messaggio=="QUIT":
             ciclo=False
-        # Riceve la risposta dal server
-        risposta = client.recv(1024).decode('utf-8')
-        print(f"Risposta del server: {risposta}")
+        else:    
+            # Riceve la risposta dal server
+            risposta = client.recv(1024).decode('utf-8')
+            print(f"Risposta del server: {risposta}")
 
 if __name__ == "__main__":
     main()
