@@ -5,12 +5,15 @@ def main():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Connette il client al server
     client.connect(('127.0.0.1', 5000))
+    ciclo=True
 
-    while True:
+    while ciclo:
         # Legge il messaggio da inviare al server
         messaggio = input("Inserisci il messaggio da inviare: ")
         # Invia il messaggio al server
         client.send(messaggio.encode('utf-8'))
+        if messaggio=="QUIT":
+            ciclo=False
         # Riceve la risposta dal server
         risposta = client.recv(1024).decode('utf-8')
         print(f"Risposta del server: {risposta}")
