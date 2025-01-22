@@ -22,7 +22,7 @@ def main():
     # Associa il socket all'indirizzo e alla porta
     server.bind(('0.0.0.0', 5000))
     # Il server inizia ad ascoltare le connessioni in arrivo
-    server.listen(5)
+    server.listen(2)
     print("Server in ascolto sulla porta 5000")
 
     while True:
