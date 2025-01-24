@@ -15,22 +15,22 @@ def main():
     if risposta == "Non autenticato":
         print("Non autenticato")
         client.close()
-        return
+        return None
+    else:
+        ciclo = True
+        while ciclo:
+            # Legge il messaggio da inviare al server
+            messaggio = input("Inserisci il messaggio da inviare: ")
+            # Invia il messaggio al server
+            client.send(messaggio.encode('utf-8'))
+            if messaggio == "QUIT":
+                ciclo = False
+            else:
+                # Riceve la risposta dal server
+                risposta = client.recv(1024).decode('utf-8')
+                print(f"Risposta del server: {risposta}")
 
-    ciclo = True
-    while ciclo:
-        # Legge il messaggio da inviare al server
-        messaggio = input("Inserisci il messaggio da inviare: ")
-        # Invia il messaggio al server
-        client.send(messaggio.encode('utf-8'))
-        if messaggio == "QUIT":
-            ciclo = False
-        else:
-            # Riceve la risposta dal server
-            risposta = client.recv(1024).decode('utf-8')
-            print(f"Risposta del server: {risposta}")
-
-    client.close()
+        client.close()
 
 if __name__ == "__main__":
     main()
