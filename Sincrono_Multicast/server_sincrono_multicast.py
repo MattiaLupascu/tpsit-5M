@@ -1,22 +1,28 @@
 import socket
 import threading
 
-def gestisci_client(socket_client,indirizzo):
-    ciclo=True
-    while ciclo:
-        try:
-            # Riceve il messaggio dal client
-            messaggio = socket_client.recv(1024).decode('utf-8')
-            if messaggio=="QUIT":
-                ciclo=False
-            print(f"Ricevuto {indirizzo}: {messaggio}")
-            # Invia una conferma al client
-            socket_client.send(f"Messaggio ricevuto".encode('utf-8'))
-        except:
-            ciclo=False
+def gestisci_client(socket_client,indirizzo,utenti):
+    messaggio = socket_client.recv(1024).decode('utf-8')
+    for i in utenti:
+        if messaggio==i:
+            ciclo=True
+            while ciclo:
+                try:
+                    # Riceve il messaggio dal client
+                    messaggio = socket_client.recv(1024).decode('utf-8')
+                    if messaggio=="QUIT":
+                        ciclo=False
+                    print(f"Ricevuto {indirizzo}: {messaggio}")
+                    # Invia una conferma al client
+                    socket_client.send(f"Messaggio ricevuto".encode('utf-8'))
+                except:
+                    ciclo=False
+            socket_client.close()
     socket_client.close()
 
 def main():
+    #Crea una lista dei utenti disponibili
+    utenti=["Mario","PierMariaLuigi","Franco","Giampino"]
     # Crea un socket per il server
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Associa il socket all'indirizzo e alla porta
@@ -25,12 +31,13 @@ def main():
     server.listen(2)
     print("Server in ascolto sulla porta 5000")
 
-    while True:
+    ciclo=True
+    while ciclo:
         # Accetta una nuova connessione
         socket_client, indirizzo = server.accept()
         print(f"Connessione accettata da {indirizzo}")
         # Crea un nuovo thread per gestire il client
-        gestore_client = threading.Thread(target=gestisci_client, args=(socket_client,indirizzo))
+        gestore_client = threading.Thread(target=gestisci_client, args=(socket_client,indirizzo,utenti))
         gestore_client.start()
 
 if __name__ == "__main__":
