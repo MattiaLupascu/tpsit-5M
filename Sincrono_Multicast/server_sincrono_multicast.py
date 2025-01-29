@@ -30,7 +30,8 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
                     elif messaggio == "LIST":
                         for i in range(len(utenti)):
                             if collegamenti[i] == 1:
-                                socket_client.send(f"{utenti[i]} è connesso".encode('utf-8'))
+                                for x in range(len(utenti[i])):
+                                    socket_client.send(f"{utenti[i]} è connesso".encode('utf-8'))
                     print(f"Ricevuto {utente}: {messaggio}")
                     # Invia una conferma al client
                     socket_client.send("Messaggio ricevuto".encode('utf-8'))
