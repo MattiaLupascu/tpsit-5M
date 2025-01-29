@@ -23,7 +23,7 @@ def main():
             print("Autenticato con successo")
 
         ciclo = True
-        ciclo_list = True
+        ciclo_lista = False
         while ciclo:
             # Legge il messaggio da inviare al server
             messaggio = input("Inserisci il messaggio da inviare: ")
@@ -32,10 +32,10 @@ def main():
             if messaggio == "QUIT":
                 ciclo = False
             elif messaggio == "LIST":
-                while ciclo_list:
+                while ciclo_lista:
                     risposta = client.recv(1024).decode('utf-8')
-                    if risposta == "Messaggio ricevuto":
-                        ciclo_list = False
+                    if risposta == "Fine lista":
+                        ciclo_lista=False
                     print(f"Risposta del server: {risposta}")
             else:
                 # Riceve la risposta dal server
