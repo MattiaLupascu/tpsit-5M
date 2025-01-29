@@ -19,7 +19,7 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
                 if utente == i:
                     collegamenti[connessione] = 1
                 connessione += 1
-
+            print(collegamenti)
             ciclo = True
             while ciclo:
                 try:
