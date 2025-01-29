@@ -15,14 +15,12 @@ def gestisci_client(socket_client, indirizzo, utenti,collegamenti):
             socket_client.send("Autenticato".encode('utf-8'))  # Invia conferma di autenticazione
             print(f"{indirizzo}: Autenticato")
             connessione=0
-            trovato=False
-            while not trovato:
-                for i in utenti:
-                    if utente == i:
-                        collegamenti[connessione] = 1
-                        trovato=True
-                    else:
-                        connessione=connessione+1
+            for i in utenti:
+                if utente == i:
+                    collegamenti[connessione] = 1
+                else:
+                    connessione=connessione+1
+
                     
             ciclo = True
             while ciclo:
