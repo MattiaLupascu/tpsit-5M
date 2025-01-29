@@ -1,7 +1,7 @@
 import socket
 import threading
 
-def gestisci_client(socket_client, indirizzo, utenti,collegamenti):
+def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
     try:
         # Riceve il primo messaggio dal client
         utente = socket_client.recv(1024).decode('utf-8')
@@ -10,18 +10,16 @@ def gestisci_client(socket_client, indirizzo, utenti,collegamenti):
             print(f"{indirizzo}: Non autenticato")
             socket_client.send("Non autenticato".encode('utf-8'))
             socket_client.close()
-            return None # Termina l'esecuzione della funzione e ritorna None
+            return None  # Termina l'esecuzione della funzione e ritorna None
         else:
             socket_client.send("Autenticato".encode('utf-8'))  # Invia conferma di autenticazione
             print(f"{indirizzo}: Autenticato")
-            connessione=0
+            connessione = 0
             for i in utenti:
                 if utente == i:
                     collegamenti[connessione] = 1
-                else:
-                    connessione=connessione+1
+                connessione += 1
 
-                    
             ciclo = True
             while ciclo:
                 try:
@@ -29,7 +27,7 @@ def gestisci_client(socket_client, indirizzo, utenti,collegamenti):
                     messaggio = socket_client.recv(1024).decode('utf-8')
                     if messaggio == "QUIT":
                         ciclo = False
-                    if messaggio == "LIST":
+                    elif messaggio == "LIST":
                         for i in range(len(utenti)):
                             if collegamenti[i] == 1:
                                 socket_client.send(f"{utenti[i]} è connesso".encode('utf-8'))
@@ -46,7 +44,7 @@ def gestisci_client(socket_client, indirizzo, utenti,collegamenti):
 def main():
     # Crea una lista dei utenti disponibili
     utenti = ["Mario", "PierMariaLuigi", "Franco", "Giampino"]
-    collegamenti = [0,0,0,0]
+    collegamenti = [0, 0, 0, 0]
     # Crea un socket per il server
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Associa il socket all'indirizzo e alla porta
@@ -57,12 +55,15 @@ def main():
 
     ciclo = True
     while ciclo:
-        # Accetta una nuova connessione
-        socket_client, indirizzo = server.accept()
-        print(f"Connessione accettata da {indirizzo}")
-        # Crea un nuovo thread per gestire il client
-        gestore_client = threading.Thread(target=gestisci_client, args=(socket_client, indirizzo, utenti,collegamenti))
-        gestore_client.start()
+        try:
+            # Accetta una nuova connessione
+            socket_client, indirizzo = server.accept()
+            print(f"Connessione accettata da {indirizzo}")
+            # Crea un nuovo thread per gestire il client
+            threading.Thread(target=gestisci_client, args=(socket_client, indirizzo, utenti, collegamenti)).start()
+        except:
+            print("Errore durante l'accettazione della connessione")
+            ciclo = False
 
 if __name__ == "__main__":
     main()
