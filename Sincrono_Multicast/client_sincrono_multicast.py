@@ -42,7 +42,7 @@ def main():
                     except Exception as e:
                         print(f"Errore durante ricezione della lista: {e}")
                         ciclo_lista = False
-                continue  # Aggiungi questa linea per continuare il ciclo principale
+                continue  # Continua il ciclo principale dopo aver ricevuto la lista
             else:
                 try:
                     risposta = client.recv(1024).decode('utf-8')
