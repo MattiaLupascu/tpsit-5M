@@ -36,7 +36,8 @@ def main():
                     risposta = client.recv(1024).decode('utf-8')
                     if risposta == "Fine lista":
                         ciclo_lista = False
-                    print(f"Risposta del server: {risposta}")
+                    else:
+                        print(f"Risposta del server: {risposta}")
             else:
                 # Riceve la risposta dal server
                 risposta = client.recv(1024).decode('utf-8')
@@ -44,7 +45,7 @@ def main():
 
         client.close()
     except:
-        print("Errore durante la comunicazione con il server")
+        print(f"Errore durante la comunicazione con il server:")
 
 if __name__ == "__main__":
     main()
