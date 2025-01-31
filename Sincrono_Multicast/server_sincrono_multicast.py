@@ -3,55 +3,68 @@ import threading
 
 def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
     try:
+        # Riceve il primo messaggio dal client
         utente = socket_client.recv(1024).decode('utf-8')
+        print(f"Ricevuto tentativo di autenticazione da {indirizzo}: {utente}")
         if utente not in utenti:
+            print(f"{indirizzo}: Non autenticato")
             socket_client.send("Non autenticato".encode('utf-8'))
             socket_client.close()
-            return
+            return None  # Termina l'esecuzione della funzione e ritorna None
         else:
-            socket_client.send("Autenticato".encode('utf-8'))
-            indice = 0
-            while indice < len(utenti):
-                if utenti[indice] == utente:
-                    collegamenti[indice] = 1
-                indice += 1
-
+            socket_client.send("Autenticato".encode('utf-8'))  # Invia conferma di autenticazione
+            print(f"{indirizzo}: Autenticato")
+            connessione = 0
+            for i in utenti:
+                if utente == i:
+                    collegamenti[connessione] = 1
+                connessione += 1
+            print(collegamenti)
             ciclo = True
             while ciclo:
                 try:
+                    # Riceve il messaggio dal client
                     messaggio = socket_client.recv(1024).decode('utf-8')
                     if messaggio == "QUIT":
                         ciclo = False
                     elif messaggio == "LIST":
-                        i = 0
-                        while i < len(utenti):
+                        for i in range(len(utenti)):
                             if collegamenti[i] == 1:
-                                socket_client.send((utenti[i] + " è connesso \n").encode('utf-8'))
-                            i += 1
+                                socket_client.send(f"{utenti[i]} è connesso \n".encode('utf-8'))
                         socket_client.send("Fine lista".encode('utf-8'))
                     else:
+                        print(f"Ricevuto {utente}: {messaggio}")
+                        # Invia una conferma al client
                         socket_client.send("Messaggio ricevuto".encode('utf-8'))
                 except:
+                    print(f"Errore durante la ricezione del messaggio")
                     ciclo = False
             socket_client.close()
-    except:
-        socket_client.close()
+    except Exception as e:
+        print(f"Errore durante la gestione del client: {e}")
 
 def main():
+    # Crea una lista dei utenti disponibili
     utenti = ["Mario", "PierMariaLuigi", "Franco", "Giampino"]
     collegamenti = [0, 0, 0, 0]
-
+    # Crea un socket per il server
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # Associa il socket all'indirizzo e alla porta
     server.bind(('0.0.0.0', 5000))
+    # Il server inizia ad ascoltare le connessioni in arrivo
     server.listen(2)
     print("Server in ascolto sulla porta 5000")
 
     ciclo = True
     while ciclo:
         try:
+            # Accetta una nuova connessione
             socket_client, indirizzo = server.accept()
+            print(f"Connessione accettata da {indirizzo}")
+            # Crea un nuovo thread per gestire il client
             threading.Thread(target=gestisci_client, args=(socket_client, indirizzo, utenti, collegamenti)).start()
-        except:
+        except Exception as e:
+            print(f"Errore durante l'accettazione della connessione: {e}")
             ciclo = False
 
 if __name__ == "__main__":
