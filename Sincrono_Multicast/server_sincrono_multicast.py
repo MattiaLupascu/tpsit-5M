@@ -40,8 +40,8 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
                     print(f"Errore durante la ricezione del messaggio")
                     ciclo = False
             socket_client.close()
-    except:
-        print(f"Errore durante la gestione del client")
+    except Exception as e:
+        print(f"Errore durante la gestione del client: {e}")
 
 def main():
     # Crea una lista dei utenti disponibili
@@ -63,8 +63,8 @@ def main():
             print(f"Connessione accettata da {indirizzo}")
             # Crea un nuovo thread per gestire il client
             threading.Thread(target=gestisci_client, args=(socket_client, indirizzo, utenti, collegamenti)).start()
-        except:
-            print("Errore durante l'accettazione della connessione")
+        except Exception as e:
+            print(f"Errore durante l'accettazione della connessione: {e}")
             ciclo = False
 
 if __name__ == "__main__":
