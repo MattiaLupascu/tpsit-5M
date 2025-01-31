@@ -33,19 +33,26 @@ def main():
             elif messaggio == "LIST":
                 ciclo_lista = True
                 while ciclo_lista:
-                    risposta = client.recv(1024).decode('utf-8')
-                    if risposta == "Fine lista":
+                    try:
+                        risposta = client.recv(1024).decode('utf-8')
+                        if risposta == "Fine lista":
+                            ciclo_lista = False
+                        else:
+                            print(f"Risposta del server: {risposta}")
+                    except Exception as e:
+                        print(f"Errore durante ricezione della lista: {e}")
                         ciclo_lista = False
-                    else:
-                        print(f"Risposta del server: {risposta}")
             else:
-                # Riceve la risposta dal server
-                risposta = client.recv(1024).decode('utf-8')
-                print(f"Risposta del server: {risposta}")
+                try:
+                    risposta = client.recv(1024).decode('utf-8')
+                    print(f"Risposta del server: {risposta}")
+                except Exception as e:
+                    print(f"Errore durante ricezione del messaggio: {e}")
+                    ciclo = False
 
         client.close()
-    except:
-        print(f"Errore durante la comunicazione con il server:")
+    except Exception as e:
+        print(f"Errore durante la comunicazione con il server: {e}")
 
 if __name__ == "__main__":
     main()
