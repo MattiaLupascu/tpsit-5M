@@ -23,7 +23,7 @@ def main():
             print("Autenticato con successo")
 
         ciclo = True
-        ciclo_lista = False
+        ciclo_lista = True
         while ciclo:
             # Legge il messaggio da inviare al server
             messaggio = input("Inserisci il messaggio da inviare: ")
