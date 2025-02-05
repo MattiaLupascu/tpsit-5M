@@ -22,15 +22,13 @@ def main():
         elif risposta == "Autenticato":
             print("Autenticato con successo")
 
-        ciclo = True
-        while ciclo:
+        messaggio = ""
+        while messaggio != "QUIT":
             # Legge il messaggio da inviare al server
             messaggio = input("Inserisci il messaggio da inviare: ")
             # Invia il messaggio al server
             client.send(messaggio.encode('utf-8'))
-            if messaggio == "QUIT":
-                ciclo = False
-            elif messaggio == "LIST":
+            if messaggio == "LIST":
                 ciclo_lista = True
                 while ciclo_lista:
                     try:
@@ -47,8 +45,8 @@ def main():
                 print(f"Risposta del server: {risposta}")
             except Exception as e:
                 print(f"Errore durante ricezione del messaggio: {e}")
-                ciclo = False
-
+                messaggio = "QUIT"
+        print("Chiusura connessione")
         client.close()
     except Exception as e:
         print(f"Errore durante la comunicazione con il server: {e}")
