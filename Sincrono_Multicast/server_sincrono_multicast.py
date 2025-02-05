@@ -29,10 +29,12 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
                         ciclo = False
                     elif messaggio == "LIST":
                         print(f"Ricevuto comando LIST da {utente}")
+                        risposta = ""
                         for i in range(len(utenti)):
                             if collegamenti[i] == 1:
-                                socket_client.send(f"{utenti[i]} è connesso \n".encode('utf-8'))
-                        socket_client.send("Fine lista".encode('utf-8'))
+                                risposta += f"{utenti[i]} è connesso \n"
+                        risposta += "Fine lista"
+                        socket_client.sendall(risposta.encode('utf-8'))
                     else:
                         print(f"Ricevuto {utente}: {messaggio}")
                         # Invia una conferma al client
