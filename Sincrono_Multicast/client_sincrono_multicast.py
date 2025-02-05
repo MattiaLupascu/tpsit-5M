@@ -18,19 +18,20 @@ def main():
         elif risposta == "Autenticato":
             print("Autenticato con successo")
 
-        while True:
+        ciclo = True
+        while ciclo:
             messaggio = input("Inserisci il messaggio da inviare (QUIT per uscire, LIST per la lista): ")
             client.send(messaggio.encode('utf-8'))
             if messaggio == "QUIT":
-                break
+                ciclo = False
             elif messaggio == "LIST":
                 buffer = ""
-                while True:
+                ciclo_2 = True
+                while ciclo_2:
                     parte = client.recv(1024).decode('utf-8')
                     buffer += parte
                     if "Fine lista" in buffer:
-                        break
-                # Rimuoviamo il delimitatore
+                        ciclo_2 = False
                 buffer = buffer.replace("Fine lista\n", "")
                 print("Server:\n" + buffer)
             else:

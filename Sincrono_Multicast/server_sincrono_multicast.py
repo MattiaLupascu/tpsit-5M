@@ -51,14 +51,15 @@ def main():
     server.listen(2)
     print("Server in ascolto sulla porta 5000")
     
-    while True:
+    ciclo_main = True
+    while ciclo_main:
         try:
             socket_client, indirizzo = server.accept()
             print(f"Connessione accettata da {indirizzo}")
             threading.Thread(target=gestisci_client, args=(socket_client, indirizzo, utenti, collegamenti)).start()
         except Exception as e:
             print(f"Errore durante l'accettazione della connessione: {e}")
-            break
+            ciclo_main = False
 
 if __name__ == "__main__":
     main()
