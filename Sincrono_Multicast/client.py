@@ -10,24 +10,25 @@ def main():
     # Riceve la risposta di autenticazione
     response = client.recv(1024).decode('utf-8')
     print(f"Server: {response}")
-
+    ciclo=True
+    ciclo_2=True
     if response == "Autenticato":
-        while True:
+        while ciclo:
             # Invia un comando al server
             command = input("Inserisci un comando (LIST, QUIT, o un messaggio): ")
             client.send(command.encode('utf-8'))
 
             if command == "QUIT":
-                break
+                ciclo=False
             elif command == "LIST":
-                while True:
+                while ciclo_2:
                     response = client.recv(1024).decode('utf-8')
                     print(f"Server: {response}")
                     if response == "Fine lista":
-                        break
-            else:
-                response = client.recv(1024).decode('utf-8')
-                print(f"Server: {response}")
+                        ciclo_2=False
+            
+            response = client.recv(1024).decode('utf-8')
+            print(f"Server: {response}")
 
     client.close()
 
