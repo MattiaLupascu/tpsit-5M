@@ -9,7 +9,7 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
             print(f"{indirizzo}: Non autenticato")
             socket_client.send("Non autenticato".encode('utf-8'))
             socket_client.close()
-            return None
+            return
         else:
             socket_client.send("Autenticato".encode('utf-8'))
             print(f"{indirizzo}: Autenticato")
@@ -18,7 +18,7 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
                 if utente == i:
                     collegamenti[connessione] = 1
                 connessione += 1
-            print(collegamenti)
+            print("Stato collegamenti:", collegamenti)
             ciclo = True
             while ciclo:
                 try:
@@ -27,12 +27,12 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
                         ciclo = False
                     elif messaggio == "LIST":
                         print(f"Ricevuto comando LIST da {utente}")
+                        risposta = ""
                         for i in range(len(utenti)):
                             if collegamenti[i] == 1:
-                                # Invia una riga per ogni utente connesso
-                                socket_client.send(f"{utenti[i]} è connesso\n".encode('utf-8'))
-                        # Invia un delimitatore che indica la fine della lista
-                        socket_client.send("Fine lista\n".encode('utf-8'))
+                                risposta += f"{utenti[i]} è connesso\n"
+                        risposta += "Fine lista\n"
+                        socket_client.sendall(risposta.encode('utf-8'))
                     else:
                         print(f"Ricevuto {utente}: {messaggio}")
                         socket_client.send("Messaggio ricevuto".encode('utf-8'))
@@ -45,21 +45,20 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
 
 def main():
     utenti = ["Mario", "PierMariaLuigi", "Franco", "Giampino"]
-    collegamenti = [0, 0, 0, 0]
+    collegamenti = [0] * len(utenti)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(('0.0.0.0', 5000))
     server.listen(2)
     print("Server in ascolto sulla porta 5000")
-
-    ciclo = True
-    while ciclo:
+    
+    while True:
         try:
             socket_client, indirizzo = server.accept()
             print(f"Connessione accettata da {indirizzo}")
             threading.Thread(target=gestisci_client, args=(socket_client, indirizzo, utenti, collegamenti)).start()
         except Exception as e:
             print(f"Errore durante l'accettazione della connessione: {e}")
-            ciclo = False
+            break
 
 if __name__ == "__main__":
     main()
