@@ -1,106 +1,177 @@
-## Spiegazione del file server_sincrono_multicast.py
+## Spiegazione aggiornata del file server_sincrono_multicast.py (linea per linea)
 
 1. import socket
-   - Importa il modulo socket, necessario per creare connessioni di rete.
+   - Importa il modulo socket, fondamentale per stabilire connessioni di rete.
 
 2. import threading
-   - Importa il modulo threading, necessario per gestire più connessioni client contemporaneamente.
+   - Importa il modulo threading per gestire più connessioni client contemporaneamente.
 
-4-18. def gestisci_client(socket_client):
-   - Definisce una funzione per gestire la comunicazione con un singolo client.
-   
-5. while True:
-   - Inizia un ciclo infinito per gestire la comunicazione continua con il client.
+3. 
+4. def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
+   - Definisce la funzione per gestire la comunicazione con un client.  
+     Nota: I parametri includono ora “indirizzo”, “utenti” e “collegamenti” per gestire autenticazione e stato.
+5.     try:
+6.         utente = socket_client.recv(1024).decode('utf-8')
+   - Riceve il nome utente dal client e lo decodifica in una stringa.
+7.         print(f"Ricevuto tentativo di autenticazione da {indirizzo}: {utente}")
+   - Stampa il tentativo di autenticazione associato all'indirizzo del client.
+8.         if utente not in utenti:
+   - Verifica se il nome utente non è tra quelli autorizzati (nella lista “utenti”).
+9.             print(f"{indirizzo}: Non autenticato")
+   - Registra nel log che il client non è autenticato.
+10.            socket_client.send("Non autenticato".encode('utf-8'))
+    - Invia al client il messaggio "Non autenticato".
+11.            socket_client.close()
+    - Chiude la connessione con il client non autorizzato.
+12.            return
+13.         else:
+14.            socket_client.send("Autenticato".encode('utf-8'))
+    - Invia al client il messaggio "Autenticato" se l'utente è presente nella lista.
+15.            print(f"{indirizzo}: Autenticato")
+    - Stampa conferma dell'avvenuta autenticazione.
+16.            connessione = 0
+17.            for i in utenti:
+18.                if utente == i:
+19.                    collegamenti[connessione] = 1
+    - Aggiorna lo stato dei “collegamenti”: imposta a 1 la posizione corrispondente all'utente autenticato.
+20.                connessione += 1
+    - Incrementa l'indice per la lista degli utenti.
+21.            print("Stato collegamenti:", collegamenti)
+    - Stampa lo stato attuale dei collegamenti.
+22.            ciclo = True
+    - Inizializza una variabile per controllare il ciclo di comunicazione con il client.
+23.            while ciclo:
+24.                try:
+25.                    messaggio = socket_client.recv(1024).decode('utf-8')
+    - Riceve un messaggio dal client in formato stringa.
+26.                    if messaggio == "QUIT":
+27.                        ciclo = False
+    - Se il messaggio è "QUIT", interrompe il ciclo e preparara la chiusura della connessione.
+28.                    elif messaggio == "LIST":
+29.                        print(f"Ricevuto comando LIST da {utente}")
+    - Identifica il comando LIST inviato dal client.
+30.                        risposta = ""
+    - Inizializza una stringa vuota che conterrà la lista degli utenti connessi.
+31.                        for i in range(len(utenti)):
+32.                            if collegamenti[i] == 1:
+33.                                risposta += f"{utenti[i]} è connesso\n"
+    - Per ogni utente connesso (dove lo stato è 1), aggiunge una riga con il messaggio "<nome utente> è connesso".
+34.                        risposta += "Fine lista\n"
+    - Aggiunge un delimitatore "Fine lista" per indicare la fine della lista invianta al client.
+35.                        socket_client.sendall(risposta.encode('utf-8'))
+    - Invia la risposta completa al client con sendall() per garantire la trasmissione completa.
+36.                    else:
+37.                        print(f"Ricevuto {utente}: {messaggio}")
+38.                        socket_client.send("Messaggio ricevuto".encode('utf-8'))
+    - Per ogni altro messaggio, stampa il contenuto e invia una conferma al client.
+39.                except Exception as e:
+40.                    print(f"Errore durante la ricezione del messaggio: {e}")
+41.                    ciclo = False
+    - In caso di errore nella ricezione, interrompe il ciclo di comunicazione.
+42.            socket_client.close()
+    - Dopo il ciclo, chiude la connessione con il client.
+43.     except Exception as e:
+44.         print(f"Errore durante la gestione del client: {e}")
+    - Gestisce eventuali eccezioni non catturate durante la comunicazione con il client.
 
-6-12. try:
-   - Tenta di ricevere e inviare messaggi al client.
-
-7. messaggio = socket_client.recv(1024).decode('utf-8')
-   - Riceve un messaggio dal client (fino a 1024 byte) e lo decodifica in una stringa.
-
-8. if not messaggio:
-   - Se non viene ricevuto alcun messaggio, esce dal ciclo.
-
-9. print(f"Ricevuto: {messaggio}")
-   - Stampa il messaggio ricevuto dal client.
-
-11. socket_client.send("Messaggio ricevuto".encode('utf-8'))
-   - Invia una conferma al client.
-
-13-14. except:
-   - Gestisce eventuali eccezioni e interrompe il ciclo.
-
-15. socket_client.close()
-   - Chiude la connessione con il client.
-
-20-21. def main():
-   - Definisce la funzione principale del server.
-
-22. server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-   - Crea un socket per il server utilizzando IPv4 (AF_INET) e TCP (SOCK_STREAM).
-
-24. server.bind(('0.0.0.0', 5000))
-   - Associa il socket all'indirizzo IP '0.0.0.0' (tutti gli indirizzi disponibili) e alla porta 5000.
-
-26. server.listen(5)
-   - Il server inizia ad ascoltare le connessioni in arrivo, con una coda massima di 5 connessioni.
-
-27. print("Server in ascolto sulla porta 5000")
-   - Stampa un messaggio per indicare che il server è in ascolto.
-
-29-34. while True:
-   - Inizia un ciclo infinito per accettare nuove connessioni.
-
-30. socket_client, indirizzo = server.accept()
-   - Accetta una nuova connessione e ottiene il socket del client e il suo indirizzo.
-
-31. print(f"Connessione accettata da {indirizzo}")
-   - Stampa un messaggio per indicare che una connessione è stata accettata.
-
-33. gestore_client = threading.Thread(target=gestisci_client, args=(socket_client,))
-   - Crea un nuovo thread per gestire il client, utilizzando la funzione gestisci_client.
-
-34. gestore_client.start()
-   - Avvia il thread per gestire il client.
-
-36. if __name__ == "__main__":
-   - Controlla se il file è eseguito come script principale.
-
-37. main()
-   - Chiama la funzione principale per avviare il server.
+45.
+46. def main():
+47.     utenti = ["Mario", "PierMariaLuigi", "Franco", "Giampino"]
+    - Definisce la lista degli utenti autorizzati.
+48.     collegamenti = [0] * len(utenti)
+    - Inizializza la lista “collegamenti” impostando a 0 (disconnesso) per ogni utente.
+49.     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    - Crea un socket TCP per il server.
+50.     server.bind(('0.0.0.0', 5000))
+    - Associa il socket a tutti gli indirizzi disponibili sulla porta 5000.
+51.     server.listen(2)
+    - Il server inizia ad ascoltare, impostando una coda massima di 2 connessioni.
+52.     print("Server in ascolto sulla porta 5000")
+    - Stampa un messaggio di conferma dell'attivazione del server.
+53.
+54.     while True:
+55.         try:
+56.             socket_client, indirizzo = server.accept()
+    - Accetta una nuova connessione in arrivo, ottenendo il socket e l'indirizzo del client.
+57.             print(f"Connessione accettata da {indirizzo}")
+    - Stampa l'indirizzo del client connesso.
+58.             threading.Thread(target=gestisci_client, args=(socket_client, indirizzo, utenti, collegamenti)).start()
+    - Avvia un nuovo thread per gestire il client, passando i parametri aggiornati.
+59.         except Exception as e:
+60.             print(f"Errore durante l'accettazione della connessione: {e}")
+61.             break
+    - Se si verifica un errore durante l'accettazione, esce dal ciclo principale.
+62.
+63. if __name__ == "__main__":
+64.     main()
+    - Avvia il server eseguendo la funzione main().
 
 
-## Spiegazione del file client_sincrono_multicast.py
+## Spiegazione aggiornata del file client_sincrono_multicast.py (linea per linea)
 
 1. import socket
-   - Importa il modulo socket, necessario per creare connessioni di rete.
+   - Importa il modulo socket per creare connessioni di rete.
 
-3-17. def main():
-   - Definisce la funzione principale del client.
-
-4. client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-   - Crea un socket per il client utilizzando IPv4 (AF_INET) e TCP (SOCK_STREAM).
-
-6. client.connect(('127.0.0.1', 5000))
-   - Connette il client al server all'indirizzo IP '127.0.0.1' (localhost) e alla porta 5000.
-
-8-16. while True:
-   - Inizia un ciclo infinito per inviare e ricevere messaggi dal server.
-
-9. messaggio = input("Inserisci il messaggio da inviare: ")
-   - Legge il messaggio da inviare al server dall'input dell'utente.
-
-11. client.send(messaggio.encode('utf-8'))
-   - Invia il messaggio al server.
-
-13. risposta = client.recv(1024).decode('utf-8')
-   - Riceve la risposta dal server (fino a 1024 byte) e la decodifica in una stringa.
-
-14. print(f"Risposta del server: {risposta}")
-   - Stampa la risposta ricevuta dal server.
-
-18. if __name__ == "__main__":
-   - Controlla se il file è eseguito come script principale.
-
-19. main()
-   - Chiama la funzione principale per avviare il client.
+2.
+3. def main():
+4.     try:
+5.         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+   - Crea un socket per il client usando IPv4 e TCP.
+6.         client.connect(('127.0.0.1', 5000))
+   - Connette il client al server in esecuzione in locale sulla porta 5000.
+7.         print("Connessione al server riuscita")
+   - Stampa un messaggio di conferma della connessione.
+8.
+9.         nome_utente = input("Inserisci il tuo nome utente: ")
+   - Legge dall'input dell'utente il nome utente per l'autenticazione.
+10.        client.send(nome_utente.encode('utf-8'))
+    - Invia il nome utente al server.
+11.        print(f"Inviato nome utente: {nome_utente}")
+    - Stampa il nome utente inviato per debug.
+12.
+13.        risposta = client.recv(1024).decode('utf-8')
+    - Riceve la risposta del server riguardante l'autenticazione.
+14.        if risposta == "Non autenticato":
+15.            print("Non autenticato")
+16.            client.close()
+17.            return
+    - Se il server risponde con "Non autenticato", il client chiude la connessione e termina.
+18.        elif risposta == "Autenticato":
+19.            print("Autenticato con successo")
+    - In caso di autenticazione positiva, stampa un messaggio di conferma.
+20.
+21.        while True:
+22.            messaggio = input("Inserisci il messaggio da inviare (QUIT per uscire, LIST per la lista): ")
+    - Richiede dall'utente un comando o messaggio da inviare.
+23.            client.send(messaggio.encode('utf-8'))
+    - Invia il messaggio digitato al server.
+24.            if messaggio == "QUIT":
+25.                break
+    - Se il messaggio è "QUIT", esce dal ciclo e chiude la connessione.
+26.            elif messaggio == "LIST":
+27.                buffer = ""
+28.                while True:
+29.                    parte = client.recv(1024).decode('utf-8')
+30.                    buffer += parte
+    - Legge iterativamente le parti della risposta del server per il comando LIST.
+31.                    if "Fine lista" in buffer:
+32.                        break
+    - Continua a leggere finché non trova il delimitatore "Fine lista" nella risposta.
+33.                buffer = buffer.replace("Fine lista\n", "")
+    - Rimuove il delimitatore "Fine lista" dalla stringa ricevuta.
+34.                print("Server:\n" + buffer)
+    - Stampa la lista degli utenti connessi ricevuta dal server.
+35.            else:
+36.                risposta = client.recv(1024).decode('utf-8')
+37.                print(f"Server: {risposta}")
+    - Per ogni altro messaggio, riceve e stampa la risposta del server.
+38.        print("Chiusura connessione")
+39.        client.close()
+    - Dopo l'uscita dal ciclo, chiude la connessione con il server.
+40.    except Exception as e:
+41.        print(f"Errore durante la comunicazione con il server: {e}")
+    - Gestisce eventuali errori nella comunicazione client-server.
+42.
+43. if __name__ == "__main__":
+44.     main()
+    - Avvia il client eseguendo la funzione main().
