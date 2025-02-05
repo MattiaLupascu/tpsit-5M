@@ -28,6 +28,7 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
                     if messaggio == "QUIT":
                         ciclo = False
                     elif messaggio == "LIST":
+                        print(f"Ricevuto comando LIST da {utente}")
                         for i in range(len(utenti)):
                             if collegamenti[i] == 1:
                                 socket_client.send(f"{utenti[i]} è connesso \n".encode('utf-8'))
@@ -36,8 +37,8 @@ def gestisci_client(socket_client, indirizzo, utenti, collegamenti):
                         print(f"Ricevuto {utente}: {messaggio}")
                         # Invia una conferma al client
                         socket_client.send("Messaggio ricevuto".encode('utf-8'))
-                except:
-                    print(f"Errore durante la ricezione del messaggio")
+                except Exception as e:
+                    print(f"Errore durante la ricezione del messaggio: {e}")
                     ciclo = False
             socket_client.close()
     except Exception as e:
