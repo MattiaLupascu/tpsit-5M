@@ -15,7 +15,7 @@ def invio_ricezione_http():
     titolo = request.form['titolo']
     anno = request.form['anno']
     scrittore = request.form['scrittore']
-    with open('Invio_ricezione_http/data.json', 'w') as file:
+    with open('data.json', 'w') as file:
         data = {
                 "title": titolo,
                 "year": anno,

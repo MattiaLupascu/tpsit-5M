@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Add proper reference to the JavaScript file -->
+    <script src="{{ url_for('static', filename='scripts/controllo.js') }}"></script>
 </head>
 <body>
     crazy stuff
     <h1>Invio e ricezione di dati tramite HTTP</h1>
     <p>Compila i campi sottostanti e premi il pulsante "Submit" per inviare i dati al server.</p>
-    <form action="/invio_ricezione_http" method="POST">
-        <input type="text" name="titolo" />
-        <input type="text" name="anno" />
-        <input type="text" name="scrittore" />
+    <form action="/invio_ricezione_http" method="POST" onsubmit="return controllo_dati(event)">
+        <label for="titolo">Titolo:</label>
+        <input type="text" name="titolo" id="titolo" /><br>
+        
+        <label for="anno">Anno:</label>
+        <input type="text" name="anno" id="anno" /><br>
+        
+        <label for="scrittore">Scrittore:</label>
+        <input type="text" name="scrittore" id="scrittore" /><br>
+        
         <input type="submit" value="Submit" />
     </form>
+    <div id="error" style="color: red;"></div>
 </body>
+</html>
