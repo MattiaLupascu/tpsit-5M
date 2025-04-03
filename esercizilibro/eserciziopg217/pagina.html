@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricerca Prodotto</title>
+    <script>
+        function cercaProdotto() {
+            let codice = document.getElementById("codice").value;
+            
+            if (!/^[a-zA-Z]\d{2}$/.test(codice)) {
+                alert("Formato codice non valido. Deve iniziare con una lettera e avere due numeri.");
+                return;
+            }
+
+            fetch("https://esempio.com/api/prodotto?codice=" + codice)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("prezzo").textContent = "Prezzo: " + data.prezzo + "€";
+                    document.getElementById("marca").textContent = "Marca: " + data.marca;
+                    document.getElementById("modello").textContent = "Modello: " + data.modello;
+                })
+                .catch(error => {
+                    alert("Prodotto non trovato.");
+                    console.error("Errore:", error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h2>Ricerca Prodotto</h2>
+    <input type="text" id="codice" placeholder="Inserisci codice (es. A12)">
+    <button onclick="cercaProdotto()">Cerca</button>
+    <ul>
+        <li id="prezzo">Prezzo: -</li>
+        <li id="marca">Marca: -</li>
+        <li id="modello">Modello: -</li>
+    </ul>
+</body>
+</html>
