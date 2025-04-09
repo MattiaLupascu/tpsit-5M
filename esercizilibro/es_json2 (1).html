@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>Esempio JSON</title>
+    <script language="javascript">
+var libri = [
+    {
+    "id":"01",
+    "linguaggio": "Java",
+    "edizione": "2019",
+    "Autore": "Salvatore Ciaramidaro",
+    },
+    {
+    "id":"02",
+    "linguaggio": "C++",
+    "edizione": "2019",
+    "Autore": "Salvatore Ciaramidaro",
+    },
+    {
+    "id":"03",
+    "linguaggio": "Python",
+    "edizione": "2023",
+    "Autore": "Salvatore Ciaramidaro",
+    }
+];
+
+for(x=0; x<3; x++){
+    document.write("<h3>id="+libri [x].id+" "+libri [x].edizione + " edizione"); 
+    document.write("- Linguaggio= " + libri[x].linguaggio +"</h3>"); 
+    document.write("<h3>Autore libri=" + libri[x].Autore + "</h3>");
+}
+
+document.write("<hr>"); 
+document.write(libri [1].linguaggio + " puoi studiarlo sul libro ");
+document.write("scritto da: " + [1].autore);
+document.write("<hr />");
+    </script>
+</head>
+<body>
+</body>
+</html>
