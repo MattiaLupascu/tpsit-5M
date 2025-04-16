@@ -22,11 +22,12 @@ macchine_usate = [
     {"marca": "Nissan", "modello": "Qashqai", "alimentazione": "Diesel", "colore": "Grigio"},
     {"marca": "Honda", "modello": "Civic", "alimentazione": "Ibrida", "colore": "Azzurro"}
 ]
-
+# Creazione root principale
 @app.route('/')
 def index():
     return render_template('index.html', macchine_usate=macchine_usate)
 
+# Creazione root per l'utilizzo del filtro delle macchine
 @app.route('/filter', methods=['POST'])
 def filter_cars():
     filtro = request.json

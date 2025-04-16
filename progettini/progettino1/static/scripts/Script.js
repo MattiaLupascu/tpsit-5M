@@ -1,10 +1,10 @@
 document.getElementById('filter-form').addEventListener('submit', function (e) {
     e.preventDefault();
-
+    // Prendo i valori dei filtri
     const marca = document.getElementById('marca').value;
     const alimentazione = document.getElementById('alimentazione').value;
     const colore = document.getElementById('colore').value;
-
+    // Utilizzo Fetch API per inviare i dati al server
     fetch('/filter', {
         method: 'POST',
         headers: {
@@ -12,6 +12,7 @@ document.getElementById('filter-form').addEventListener('submit', function (e) {
         },
         body: JSON.stringify({ marca, alimentazione, colore }),
     })
+    // Gestisco la risposta del server
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById('car-table-body');
